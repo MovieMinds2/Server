@@ -1,0 +1,16 @@
+
+클라이언트에서 보낸 쿠키값은 어떻게 받아야 하나?
+
+현재 서버에서 
+   res.cookie("token", userToken, {
+        // js파일로 접근 불가
+        httpOnly: true,
+      });
+설정이 되어 있기에 js파일로 접근이 불가
+=> httpOnly를 설정하면 api 호출마다 브라우저가 쿠키값을 자동으로 전송, 서버에서 cookie-parser 모듈을 통해
+받을 수 있음
+
+설치	npm i cookie-parser
+등록	app.use(cookieParser());
+사용	req.cookies.token
+CORS 필수	credentials: true 양쪽에서 설정

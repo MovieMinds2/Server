@@ -1,23 +1,12 @@
-const {
-  createUserWithEmailAndPassword,
-  updateProfile,
-} = require("firebase/auth");
 const auth = require("../../FirebaseAdmin");
 
-// 회원 가입
-const signUp = async (nickname, email, password) => {
+const login = async (userId) => {
   try {
-    const user = await auth.createUser({
-      email: email,
-      password: password,
-      displayName: nickname,
-    });
-
-    return { id: user.uid, nickname: user.displayName };
+    const result = await auth.getUser(userId);
+    return result.uid;
   } catch (error) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode, ":", errorMessage);
+    console.log(error.code, ":", error.message);
+    throw new Error("에러 발생");
   }
 };
 
@@ -28,4 +17,4 @@ const serviceSocialLogin = () => {
   return result;
 };
 
-module.exports = { serviceSocialLogin, signUp };
+module.exports = { serviceSocialLogin, login };

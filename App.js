@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cookieParser = require("cookie-parser");
 const userRouter = require("./Routes/Users");
 const cors = require("cors");
 const corsOption = require("./cors");
@@ -14,5 +15,6 @@ app.listen(process.env.PORT, () => {
 
 app.use(cors(corsOption));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/users", userRouter);

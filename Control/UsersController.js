@@ -25,11 +25,4 @@ const login = async (req, res) => {
   }
 };
 
-// 소셜 로그인(파이어 베이스)
-const socialLogin = (req, res) => {
-  const result = usersService.serviceSocialLogin();
-
-  res.status(200).json(result);
-};
-
-module.exports = { socialLogin, login };
+module.exports = { login };

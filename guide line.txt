@@ -13,4 +13,4 @@
 설치	npm i cookie-parser
 등록	app.use(cookieParser());
 사용	req.cookies.token
-CORS 필수	credentials: true 양쪽에서 설정
+CORS 필수	credentials: true 클라이언트, 서버 양쪽에서 설정

@@ -10,11 +10,4 @@ const login = async (userId) => {
   }
 };
 
-// 소셜 로그인
-const serviceSocialLogin = () => {
-  const result = "소셜 로그인 성공";
-
-  return result;
-};
-
-module.exports = { serviceSocialLogin, login };
+module.exports = { login };

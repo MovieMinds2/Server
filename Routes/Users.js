@@ -41,7 +41,4 @@ router.post(
   userController.login
 );
 
-// 소셜 로그인
-router.post("/sign-up/social-login", userController.socialLogin);
-
 module.exports = router;

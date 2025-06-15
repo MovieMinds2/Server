@@ -28,7 +28,7 @@ const validation = (req, res, next) => {
 //     "총 8자 이상으로 작성해야 하며, 대문자 및 특수문자 1개를 반드시 포함해야 합니다."
 //   ),
 
-// 일반 로그인
+// 로그인
 router.post(
   "/login",
   [
@@ -40,5 +40,8 @@ router.post(
   ],
   userController.login
 );
+
+// 로그아웃
+router.post("/logout", userController.logout);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
-const userRouter = require("./Routes/Users");
+const userRouter = require("./Routes/User");
 const cors = require("cors");
 const corsOption = require("./cors");
 //mysql2/promise connect()가 필요없는 자동 연결 방식

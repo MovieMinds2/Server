@@ -15,7 +15,6 @@ const login = async (req, res) => {
       console.log("userToken:", userToken);
 
       res.cookie("token", userToken, {
-        // js파일로 접근 불가
         httpOnly: true,
       });
       return res.status(StatusCodes.OK).end();
@@ -25,4 +24,13 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const logout = (req, res) => {
+  try {
+    res.clearCookie("token", { httpOnly: true });
+    res.status(StatusCodes.OK).end();
+  } catch (error) {
+    console.log(`${error.code}:${error.message}`);
+  }
+};
+
+module.exports = { login, logout };

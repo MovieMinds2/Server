@@ -3,6 +3,7 @@ const express = require("express");
 const userController = require("../Control/UsersController");
 const { body, validationResult } = require("express-validator");
 const { StatusCodes } = require("http-status-codes");
+const { test } = require("../DB/Query/QueryCommand");
 const router = express.Router();
 
 //함수의 모듈화
@@ -20,14 +21,6 @@ const validation = (req, res, next) => {
   }
 };
 
-// body("password")
-//   .notEmpty()
-//   .isString()
-//   .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/)
-//   .withMessage(
-//     "총 8자 이상으로 작성해야 하며, 대문자 및 특수문자 1개를 반드시 포함해야 합니다."
-//   ),
-
 // 로그인
 router.post(
   "/login",
@@ -43,5 +36,12 @@ router.post(
 
 // 로그아웃
 router.post("/logout", userController.logout);
+
+// jwt 유효성 체크
+router.post("/jwt", userController.jwtTest);
+
+router.post("/test", (req, res) => {
+  test();
+});
 
 module.exports = router;

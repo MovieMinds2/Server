@@ -1,6 +1,8 @@
 const usersService = require("../Service/Users/UserService");
 const { generateToken } = require("../Service/Users/Jwt");
 const { StatusCodes } = require("http-status-codes");
+const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
+const jwt = require("jsonwebtoken");
 
 // 로그인
 const login = async (req, res) => {
@@ -33,4 +35,15 @@ const logout = (req, res) => {
   }
 };
 
-module.exports = { login, logout };
+const jwtTest = (req, res) => {
+  try {
+    const { token } = req.cookies; // 모든 쿠키 객체
+    const userId = ensureAuthorization(token);
+
+    return res.status(StatusCodes.Ok).end(userId);
+  } catch (error) {
+    jwtError(res, error);
+  }
+};
+
+module.exports = { login, logout, jwtTest };

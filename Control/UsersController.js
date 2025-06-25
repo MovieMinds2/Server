@@ -19,7 +19,7 @@ const login = async (req, res) => {
       res.cookie("token", userToken, {
         httpOnly: true,
       });
-      return res.status(StatusCodes.OK).end();
+      return res.status(StatusCodes.OK).send();
     }
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).end({ error: error.message });
@@ -28,8 +28,11 @@ const login = async (req, res) => {
 
 const logout = (req, res) => {
   try {
-    res.clearCookie("token", { httpOnly: true });
-    res.status(StatusCodes.OK).end();
+    console.log("로그아웃");
+    res.clearCookie("token", {
+      httpOnly: true,
+    });
+    return res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log(`${error.code}:${error.message}`);
   }

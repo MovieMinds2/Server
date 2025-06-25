@@ -4,22 +4,8 @@ const userController = require("../Control/UsersController");
 const { body, validationResult } = require("express-validator");
 const { StatusCodes } = require("http-status-codes");
 const { test } = require("../DB/Query/QueryCommand");
+const validation = require("../Feature/Validation");
 const router = express.Router();
-
-//함수의 모듈화
-//미들웨어: express에서 req와 res 사이에서 실행되는 메소드
-const validation = (req, res, next) => {
-  const err = validationResult(req);
-
-  //이중 부정 = 긍정 (불편함)
-  if (err.isEmpty()) {
-    next();
-  } else {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      validateError: err.array(),
-    });
-  }
-};
 
 // 로그인
 router.post(

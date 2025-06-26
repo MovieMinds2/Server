@@ -4,6 +4,7 @@ const {
   serviceGetReview,
 } = require("../Service/Review/ReviewService");
 const snakeToCamel = require("../Feature/convertCamel");
+const { ensureAuthorization } = require("../Feature/Authorization");
 
 const insertReview = async (req, res) => {
   const reviewInfo = req.body.newReview;

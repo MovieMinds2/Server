@@ -16,6 +16,11 @@ const insertReview = async (req, res) => {
 };
 
 const getReviews = async (req, res) => {
+
+  const { token } = req.cookies; // 모든 쿠키 객체
+  console.log("token:", token);
+
+
   const movieId = req.params.movieId;
   const result = await serviceGetReview(movieId);
   const resultCamel = snakeToCamel(result);

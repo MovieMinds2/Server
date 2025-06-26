@@ -3,9 +3,18 @@ const { generateToken } = require("../Service/Users/Jwt");
 const { StatusCodes } = require("http-status-codes");
 const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
 const jwt = require("jsonwebtoken");
+const { maxAge } = require("../Cors");
 
 // 로그인
 const login = async (req, res) => {
+
+    const ip =
+    req.headers['x-forwarded-for']?.split(',').shift() ||  // 프록시 또는 로드 밸런서 뒤일 경우
+    req.socket?.remoteAddress ||                           // 일반적인 경우
+    null;
+
+  console.log('Client IP:', ip);
+  
   try {
     const { userId } = req.body;
 

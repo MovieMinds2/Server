@@ -26,8 +26,4 @@ router.post("/logout", userController.logout);
 // jwt 유효성 체크
 router.post("/jwt", userController.jwtTest);
 
-router.post("/test", (req, res) => {
-  test();
-});
-
 module.exports = router;

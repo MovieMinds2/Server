@@ -41,8 +41,8 @@ const queryInsertReview = async (reviewInfo) => {
 //리뷰 조회
 const queryGetReview = async (movieId) => {
   console.log(movieId);
-
-  const sql = "select * from review where movie_id =?";
+  const sql =
+    "select user_id, nickname, content,rank_score,created_at  from review where movie_id =?";
   const values = [movieId];
 
   return await executeSql(sql, values);

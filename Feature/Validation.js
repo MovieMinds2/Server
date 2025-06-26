@@ -1,4 +1,7 @@
 //함수의 모듈화
+
+const { validationResult } = require("express-validator");
+
 //미들웨어: express에서 req와 res 사이에서 실행되는 메소드
 const validation = (req, res, next) => {
   const err = validationResult(req);

@@ -3,7 +3,6 @@ const { generateToken } = require("../Service/Users/Jwt");
 const { StatusCodes } = require("http-status-codes");
 const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
 const jwt = require("jsonwebtoken");
-const { maxAge } = require("../Cors");
 
 // 로그인
 const login = async (req, res) => {
@@ -26,7 +25,9 @@ const login = async (req, res) => {
       console.log("userToken:", userToken);
 
       res.cookie("token", userToken, {
-        httpOnly: true,
+      httpOnly:true,
+      secure: true, // ✅ 반드시 설정
+      sameSite:"none",
       });
       return res.status(StatusCodes.OK).send();
     }
@@ -39,7 +40,10 @@ const logout = (req, res) => {
   try {
     console.log("로그아웃");
     res.clearCookie("token", {
-      httpOnly: true,
+      httpOnly:true,
+      secure: true, // ✅ 반드시 설정
+      sameSite:"none",
+
     });
     return res.status(StatusCodes.OK).end();
   } catch (error) {

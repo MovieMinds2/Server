@@ -99,9 +99,107 @@ const queryDeleteLikes = async (reviewInfo)=> {
   return executeSql(sql, values);
 }
 
+const queryDeleteReview = async (deleteInfo)=> { 
+
+  const { movieId, reviewId, userId,  } = deleteInfo;
+  const values = [reviewId, userId, movieId]; 
+
+  console.log(values);
+
+  let sql = `delete from review where id = ? and user_id=? and movie_id = ?;`
+  return executeSql(sql, values);
+}
+
+const querySeleteAll = async (deleteInfo,userId)=> {
+
+  console.log("userId:",userId);
+
+  const review = {} 
+    const sort = deleteInfo.sort.toString();    //  "latest" | "oldest" | "likes_desc";
+    const currentPage = parseInt(deleteInfo.currentPage); 
+    const limit = parseInt(deleteInfo.limit); 
+      
+    // OFFSET
+    const currentPageIndex = (currentPage - 1) * limit;
+    const values = [userId, limit,currentPageIndex];
+
+    let sql; 
+    // 개행문자 " " 주의
+    console.log("sort:", sort);
+
+    if(sort === "latest")
+    {
+      console.log("최신순");
+      sql = `SELECT
+	SQL_CALC_FOUND_ROWS r.*,
+  COUNT(rl.user_id) AS like_count,
+  EXISTS (
+    SELECT 1
+    FROM likes l
+    WHERE l.review_id = r.id AND l.user_id = ? 
+  ) AS isLike
+FROM review r
+LEFT JOIN likes rl ON r.id = rl.review_id
+GROUP BY 
+  r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
+ORDER BY r.created_at DESC 
+limit ? OFFSET ?; `;
+    }
+
+
+    else if(sort ==="oldest")
+    {
+      console.log("오래된 순");
+      sql =`SELECT
+	SQL_CALC_FOUND_ROWS r.*,
+  COUNT(rl.user_id) AS like_count,
+  EXISTS (
+    SELECT 1
+    FROM likes l
+    WHERE l.review_id = r.id AND l.user_id = ? 
+  ) AS isLike
+FROM review r
+LEFT JOIN likes rl ON r.id = rl.review_id
+GROUP BY 
+  r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
+ORDER BY r.created_at ASC 
+limit ? OFFSET ?; `;
+    }
+
+    // "likes_desc";
+    else
+    {
+
+      console.log("설마 여기..")
+    }
+    
+    review.reviews = await executeSql(sql, values);
+
+    console.lg
+
+    sql =`select found_rows()`;
+    
+    const rows = await executeSql(sql); 
+    
+    review.pagination = {currentPage: currentPage, totalCount:rows[0]["found_rows()"]}; 
+
+
+    //   let sqlPaging = `LIMIT  ? OFFSET  ?`;
+
+    // sql = `select found_rows()`; // 방금 출력된 행의 수를 가져오는 명령어
+    
+  // console.log(values);
+
+  // let sql = `delete from review where id = ? and user_id=? and movie_id = ?;`
+
+  return review;
+
+}
+
+
 const executeSql = async (sql, values) => {
   const [result, fields] = await mariadb.query(sql, values);
   return result;
 };
 
-module.exports = { test, queryInsertReview, queryGetReview,queryInsertLikes,queryDeleteLikes };
+module.exports = { test, queryInsertReview, queryGetReview,queryInsertLikes,queryDeleteLikes ,queryDeleteReview ,querySeleteAll};

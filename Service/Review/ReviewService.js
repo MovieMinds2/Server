@@ -2,7 +2,9 @@ const {
   queryInsertReview,
   queryGetReview,
   queryInsertLikes,
-  queryDeleteLikes
+  queryDeleteLikes,
+  queryDeleteReview,
+  querySeleteAll
 } = require("../../DB/Query/QueryCommand");
 
 const serviceInsertReview = async (reviewInfo) => {
@@ -21,4 +23,12 @@ const deleteLikes =  async (likesInfo) => {
   return await queryDeleteLikes(likesInfo);
 }
 
-module.exports = { serviceInsertReview, serviceGetReview,insertLikes, deleteLikes};
+const serviceDeleteReview =  async (deleteInfo) => {
+  return await queryDeleteReview(deleteInfo);
+}
+
+const serviceGetReviewsAll =  async (reviewInfo, userId) => {
+  return await querySeleteAll(reviewInfo,userId);
+}
+
+module.exports = { serviceInsertReview, serviceGetReview,insertLikes, deleteLikes, serviceDeleteReview,serviceGetReviewsAll};

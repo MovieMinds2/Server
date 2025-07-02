@@ -4,6 +4,8 @@ const {
   serviceGetReview,
   insertLikes,
   deleteLikes,
+  serviceDeleteReview,
+  serviceGetReviewsAll,
 } = require("../Service/Review/ReviewService");
 const snakeToCamel = require("../Feature/convertCamel");
 const { ensureAuthorization } = require("../Feature/Authorization");
@@ -20,6 +22,19 @@ const insertReview = async (req, res) => {
 const getReviews = async (req, res) => {
   const reviewInfo  = req.body; 
   const result = await serviceGetReview(reviewInfo);
+  console.log("result:",result);
+  const resultCamel = snakeToCamel(result);
+  console.log("resultCamel:", resultCamel);
+
+  return res.status(StatusCodes.OK).json(resultCamel);
+};
+
+const getReviewsAll = async (req, res) => {
+  const reviewInfo  = req.query; 
+  const {userId} = req.body; 
+
+  const result = await serviceGetReviewsAll(reviewInfo,userId);
+
   const resultCamel = snakeToCamel(result);
   console.log("resultCamel:", resultCamel);
 
@@ -48,4 +63,19 @@ const likesDelete = async (req,res)=>{
   
 }
 
-module.exports = { insertReview, getReviews,likes, likesDelete };
+const deleteReview = async (req,res)=>{
+  console.log("리뷰 삭제");
+  
+  const result = await serviceDeleteReview(req.body);
+
+  if(result.affectedRows>0)
+  {
+    res.status(StatusCodes.OK).end();
+  }
+  
+}
+
+
+
+
+module.exports = { insertReview, getReviews,likes, likesDelete,deleteReview ,getReviews, getReviewsAll};

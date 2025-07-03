@@ -169,8 +169,23 @@ limit ? OFFSET ?; `;
     // "likes_desc";
     else
     {
+      sql =`
+      SELECT
+	SQL_CALC_FOUND_ROWS r.*,
+  COUNT(rl.user_id) AS like_count,
+  EXISTS (
+    SELECT 1
+    FROM likes l
+    WHERE l.review_id = r.id AND l.user_id =?
+  ) AS isLike
+FROM review r
+LEFT JOIN likes rl ON r.id = rl.review_id
+GROUP BY 
+  r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
+ORDER BY like_count DESC 
+limit ? OFFSET ?;
 
-      console.log("설마 여기..")
+      `
     }
     
     review.reviews = await executeSql(sql, values);

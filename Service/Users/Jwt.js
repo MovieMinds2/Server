@@ -13,10 +13,10 @@ const generateToken = (userId) => {
 
       // 유효기간 설정
       {
-        expiresIn: "1h", //s:초 m:분 ,h: 시간
+        expiresIn: "2m", //s:초 m:분 ,h: 시간
         issuer: "admin", //발행한 사람
       }
-    );
+    )
 
     return token;
   } catch (error) {

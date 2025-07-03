@@ -28,6 +28,7 @@ const login = async (req, res) => {
       httpOnly:true,
       secure: true, // ✅ 반드시 설정
       sameSite:"none",
+      maxAge: 1000 * 60 * 60 * 24, // ✅ 1일 = 86400000 밀리초
       });
       return res.status(StatusCodes.OK).send();
     }
@@ -43,7 +44,6 @@ const logout = (req, res) => {
       httpOnly:true,
       secure: true, // ✅ 반드시 설정
       sameSite:"none",
-
     });
     return res.status(StatusCodes.OK).end();
   } catch (error) {
@@ -51,15 +51,5 @@ const logout = (req, res) => {
   }
 };
 
-const jwtTest = (req, res) => {
-  try {
-    const { token } = req.cookies; // 모든 쿠키 객체
-    const userId = ensureAuthorization(token);
 
-    return res.status(StatusCodes.Ok).end(userId);
-  } catch (error) {
-    jwtError(res, error);
-  }
-};
-
-module.exports = { login, logout, jwtTest };
+module.exports = { login, logout };

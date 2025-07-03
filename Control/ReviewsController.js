@@ -8,21 +8,38 @@ const {
   serviceGetReviewsAll,
 } = require("../Service/Review/ReviewService");
 const snakeToCamel = require("../Feature/convertCamel");
-const { ensureAuthorization } = require("../Feature/Authorization");
+const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
 
 const insertReview = async (req, res) => {
-  const reviewInfo = req.body.newReview;
-  console.log(reviewInfo);
-  //db에 저장
-  const result = await serviceInsertReview(reviewInfo);
+  // Authrization 체크
+  try {
+    const { token } = req.cookies; // 모든 쿠키 객체
 
-  return res.status(StatusCodes.OK).json(result);
+    const userId = ensureAuthorization(token);
+    console.log("Authrization:", userId);
+
+    const reviewInfo = req.body.newReview;
+    console.log(reviewInfo);
+    //db에 저장
+    const result = await serviceInsertReview(reviewInfo);
+
+    console.log("result:", result);
+
+    if (result) {
+      return res.status(StatusCodes.OK).json(result);
+    } else {
+      return res.status(StatusCodes.BAD_REQUEST).end();
+    }
+  } catch (error) {
+    jwtError(res, error);
+    return;
+  }
 };
 
 const getReviews = async (req, res) => {
-  const reviewInfo  = req.body; 
+  const reviewInfo = req.body;
   const result = await serviceGetReview(reviewInfo);
-  console.log("result:",result);
+  console.log("result:", result);
   const resultCamel = snakeToCamel(result);
   console.log("resultCamel:", resultCamel);
 
@@ -30,10 +47,10 @@ const getReviews = async (req, res) => {
 };
 
 const getReviewsAll = async (req, res) => {
-  const reviewInfo  = req.query; 
-  const {userId} = req.body; 
+  const reviewInfo = req.query;
+  const { userId } = req.body;
 
-  const result = await serviceGetReviewsAll(reviewInfo,userId);
+  const result = await serviceGetReviewsAll(reviewInfo, userId);
 
   const resultCamel = snakeToCamel(result);
   console.log("resultCamel:", resultCamel);
@@ -41,41 +58,66 @@ const getReviewsAll = async (req, res) => {
   return res.status(StatusCodes.OK).json(resultCamel);
 };
 
-const likes = async (req,res)=>{
-  console.log("좋아요 등록");
-  
-  const result = await insertLikes(req.body);
-  if(result.affectedRows>0)
-  {
-    res.status(StatusCodes.OK).end();
+const likes = async (req, res) => {
+  try {
+    console.log("좋아요 등록");
+    const { token } = req.cookies; // 모든 쿠키 객체
+
+    const userId = ensureAuthorization(token);
+    console.log("Authrization:", userId);
+    const result = await insertLikes(req.body);
+    if (result.affectedRows > 0) {
+      res.status(StatusCodes.OK).end();
+    }
+  } catch (error) {
+    jwtError(res, error);
+    return;
   }
-  
-}
+};
 
-const likesDelete = async (req,res)=>{
-  console.log("좋아요 삭제");
-  
-  const result = await deleteLikes(req.body);
-  if(result.affectedRows>0)
-  {
-    res.status(StatusCodes.OK).end();
+const likesDelete = async (req, res) => {
+  try {
+    const { token } = req.cookies; // 모든 쿠키 객체
+
+    const userId = ensureAuthorization(token);
+    console.log("Authrization:", userId);
+    console.log("좋아요 삭제");
+
+    const result = await deleteLikes(req.body);
+    if (result.affectedRows > 0) {
+      res.status(StatusCodes.OK).end();
+    }
+  } catch (error) {
+    jwtError(res, error);
+    return;
   }
-  
-}
+};
 
-const deleteReview = async (req,res)=>{
-  console.log("리뷰 삭제");
-  
-  const result = await serviceDeleteReview(req.body);
+const deleteReview = async (req, res) => {
+  try {
+    const { token } = req.cookies; // 모든 쿠키 객체
 
-  if(result.affectedRows>0)
-  {
-    res.status(StatusCodes.OK).end();
+    const userId = ensureAuthorization(token);
+    console.log("Authrization:", userId);
+    console.log("리뷰 삭제");
+
+    const result = await serviceDeleteReview(req.body);
+
+    if (result.affectedRows > 0) {
+      res.status(StatusCodes.OK).end();
+    }
+  } catch (error) {
+    jwtError(res, error);
+    return;
   }
-  
-}
+};
 
-
-
-
-module.exports = { insertReview, getReviews,likes, likesDelete,deleteReview ,getReviews, getReviewsAll};
+module.exports = {
+  insertReview,
+  getReviews,
+  likes,
+  likesDelete,
+  deleteReview,
+  getReviews,
+  getReviewsAll,
+};

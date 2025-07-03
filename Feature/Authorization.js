@@ -22,13 +22,20 @@ const ensureAuthorization = (token) => {
 };
 
 const jwtError = (res, error) => {
+  const MSG = `다시 로그인 하세요.`; 
   if (error instanceof jwt.TokenExpiredError) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "로그인 세션이 만료되었습니다. 다시 로그인 하세요.",
+      message: `로그인 세션이 만료되었습니다. ${MSG}`,
     });
   } else if (error instanceof jwt.JsonWebTokenError) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "토큰값이 올바르지 않습니다. ", // 토큰값을 잘못 입력했기에 bad request
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      message: `토큰값이 올바르지 않습니다. ${MSG}`,
+    });
+  }
+  // ReferenceError
+  else{
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+      message: `토큰값이 존재하지 않습니다. ${MSG}`, 
     });
   }
 };

@@ -12,30 +12,31 @@ const ensureAuthorization = (token) => {
 
       console.log(decodedJWT);
       return decodedJWT.id;
-    } else {
-      throw new ReferenceError("jwt must be provided");
     }
-  } catch (err) {
-    console.log(err.name, ":", err.message);
-    throw err;
+  } catch (error) {
+    throw error;
   }
 };
 
-const jwtError = (res, error) => {
-  const MSG = `다시 로그인 하세요.`; 
+const jwtError = (error, res) => {
+  console.log(error);
+  const MSG = `다시 로그인 하세요.`;
   if (error instanceof jwt.TokenExpiredError) {
+    console.log("토큰 만료");
     return res.status(StatusCodes.UNAUTHORIZED).json({
       message: `로그인 세션이 만료되었습니다. ${MSG}`,
     });
   } else if (error instanceof jwt.JsonWebTokenError) {
+    console.log("잘못된 토큰값");
     return res.status(StatusCodes.UNAUTHORIZED).json({
       message: `토큰값이 올바르지 않습니다. ${MSG}`,
     });
   }
   // ReferenceError
-  else{
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: `토큰값이 존재하지 않습니다. ${MSG}`, 
+  else if (error instanceof ReferenceError) {
+    console.log("토큰 없음");
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      message: `토큰값이 존재하지 않습니다. ${MSG}`,
     });
   }
 };

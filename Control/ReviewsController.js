@@ -9,6 +9,7 @@ const {
 } = require("../Service/Review/ReviewService");
 const snakeToCamel = require("../Feature/convertCamel");
 const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
+const { callGPT } = require("../Feature/ReviewFilter");
 
 const insertReview = async (req, res) => {
   // Authrization 체크
@@ -19,7 +20,18 @@ const insertReview = async (req, res) => {
     console.log("Authrization:", userId);
 
     const reviewInfo = req.body.newReview;
-    console.log(reviewInfo);
+    // 필터링
+    const filterResult = JSON.parse(await callGPT(reviewInfo.content));
+    console.log(filterResult);
+
+    if (filterResult.result === "nonPass") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Bad_Content",
+        filterResult: "nonPass",
+        reason: "욕설 포함",
+      });
+    }
+
     //db에 저장
     const result = await serviceInsertReview(reviewInfo);
 
@@ -28,10 +40,12 @@ const insertReview = async (req, res) => {
     if (result) {
       return res.status(StatusCodes.OK).json(result);
     } else {
-      return res.status(StatusCodes.BAD_REQUEST).end();
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Review_Duplication" });
     }
   } catch (error) {
-    jwtError(res, error);
+    jwtError(error, res);
     return;
   }
 };

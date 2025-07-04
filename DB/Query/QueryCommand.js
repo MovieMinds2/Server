@@ -22,15 +22,6 @@ const queryInsertReview = async (reviewInfo) => {
   const { movieId, movieTitle, userId, nickname, rankScore, content } =
     reviewInfo;
 
-  console.log("결과:", {
-    movieId,
-    movieTitle,
-    userId,
-    nickname,
-    rankScore,
-    content,
-  });
-
   // 존재 여부
   let sql = `select * from review where movie_id =? and user_id =?;`;
   let values = [movieId, userId];

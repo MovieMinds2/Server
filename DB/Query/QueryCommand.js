@@ -10,13 +10,6 @@ let mariadb;
   }
 })();
 
-const test = async () => {
-  const sql = `select * from likes`;
-  const [result, fields] = await mariadb.query(sql);
-
-  console.log(result);
-};
-
 // 리뷰 등록
 const queryInsertReview = async (reviewInfo) => {
   const { movieId, movieTitle, userId, nickname, rankScore, content } =
@@ -107,6 +100,7 @@ const queryDeleteReview = async (deleteInfo) => {
   console.log(values);
 
   let sql = `delete from review where id = ? and user_id=? and movie_id = ?;`;
+
   return executeSql(sql, values);
 };
 
@@ -177,7 +171,6 @@ GROUP BY
   r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
 ORDER BY like_count DESC 
 limit ? OFFSET ?;
-
       `;
   }
 
@@ -205,17 +198,53 @@ limit ? OFFSET ?;
   return review;
 };
 
+const queryGetMyReview = async (userId) => {
+  const values = [userId];
+
+  console.log(values);
+
+  let sql = `SELECT
+r.*,
+  COUNT(rl.user_id) AS like_count,
+  EXISTS (
+    SELECT 1
+    FROM likes l
+    WHERE l.review_id = r.id AND l.user_id = "pe20SeMxcLOhfE5XSR0Gv6OU18u2"
+  ) AS isLike
+FROM review r
+LEFT JOIN likes rl ON r.id = rl.review_id
+where r.user_id = "pe20SeMxcLOhfE5XSR0Gv6OU18u2"
+GROUP BY 
+  r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
+ORDER BY r.created_at DESC ;`;
+  return executeSql(sql, values);
+};
+
+const queryPutReview = async (reviewInfo) => {
+  const { reviewId, updatedContent } = reviewInfo;
+
+  const values = [updatedContent, reviewId];
+
+  console.log(values);
+
+  let sql = `UPDATE review
+SET content = ?
+WHERE id = ?`;
+  return executeSql(sql, values);
+};
+
 const executeSql = async (sql, values) => {
   const [result, fields] = await mariadb.query(sql, values);
   return result;
 };
 
 module.exports = {
-  test,
   queryInsertReview,
   queryGetReview,
   queryInsertLikes,
   queryDeleteLikes,
   queryDeleteReview,
   querySeleteAll,
+  queryGetMyReview,
+  queryPutReview,
 };

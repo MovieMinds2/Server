@@ -6,7 +6,7 @@ const corsOption = {
     "https://localhost:5176",
     `https://moviereview-5acd9.web.app`,
   ],
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
@@ -17,7 +17,7 @@ const corsOption = {
     "Accept",
   ],
   exposedHeaders: ["Content-Length", "Authorization"],
-  credentials: true, 
+  credentials: true,
   maxAge: 3600,
 };
 

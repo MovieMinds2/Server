@@ -12,6 +12,8 @@ const { ensureAuthorization, jwtError } = require("../Feature/Authorization");
 const { callGPT } = require("../Feature/ReviewFilter");
 
 const insertReview = async (req, res) => {
+  console.log("body:", req.body);
+
   // Authrization 체크
   try {
     const { token } = req.cookies; // 모든 쿠키 객체
@@ -40,9 +42,7 @@ const insertReview = async (req, res) => {
     if (result) {
       return res.status(StatusCodes.OK).json(result);
     } else {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Review_Duplication" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: "dd" });
     }
   } catch (error) {
     jwtError(error, res);
@@ -84,7 +84,7 @@ const likes = async (req, res) => {
       res.status(StatusCodes.OK).end();
     }
   } catch (error) {
-    jwtError(res, error);
+    jwtError(error, res);
     return;
   }
 };
@@ -102,7 +102,7 @@ const likesDelete = async (req, res) => {
       res.status(StatusCodes.OK).end();
     }
   } catch (error) {
-    jwtError(res, error);
+    jwtError(error, res);
     return;
   }
 };
@@ -115,13 +115,19 @@ const deleteReview = async (req, res) => {
     console.log("Authrization:", userId);
     console.log("리뷰 삭제");
 
-    const result = await serviceDeleteReview(req.body);
+    const deleteInfo = {
+      movieId: req.body.movieId,
+      userId,
+      reviewId: req.body.reviewId,
+    };
+
+    const result = await serviceDeleteReview(deleteInfo);
 
     if (result.affectedRows > 0) {
       res.status(StatusCodes.OK).end();
     }
   } catch (error) {
-    jwtError(res, error);
+    jwtError(error, res);
     return;
   }
 };

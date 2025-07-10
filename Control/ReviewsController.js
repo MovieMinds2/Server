@@ -42,7 +42,9 @@ const insertReview = async (req, res) => {
     if (result) {
       return res.status(StatusCodes.OK).json(result);
     } else {
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: "dd" });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Duplication_Review" });
     }
   } catch (error) {
     jwtError(error, res);

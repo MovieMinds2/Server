@@ -36,7 +36,7 @@ const queryInsertReview = async (reviewInfo) => {
 const queryGetReview = async (reviewInfo) => {
   const { movieId, userId } = reviewInfo;
 
-  console.log("reviewInfo:", reviewInfo);
+  console.log(userId, reviewInfo);
 
   let reviewResult = {};
   let values = [movieId];
@@ -104,13 +104,11 @@ const queryDeleteReview = async (deleteInfo) => {
   return executeSql(sql, values);
 };
 
-const querySeleteAll = async (deleteInfo, userId) => {
-  console.log("userId:", userId);
-
+const querySeleteAll = async (reviewInfo, userId) => {
   const review = {};
-  const sort = deleteInfo.sort.toString(); //  "latest" | "oldest" | "likes_desc";
-  const currentPage = parseInt(deleteInfo.currentPage);
-  const limit = parseInt(deleteInfo.limit);
+  const sort = reviewInfo.sort.toString(); //  "latest" | "oldest" | "likes_desc";
+  const currentPage = parseInt(reviewInfo.currentPage);
+  const limit = parseInt(reviewInfo.limit);
 
   // OFFSET
   const currentPageIndex = (currentPage - 1) * limit;
@@ -199,7 +197,7 @@ limit ? OFFSET ?;
 };
 
 const queryGetMyReview = async (userId) => {
-  const values = [userId];
+  const values = [userId, userId];
 
   console.log(values);
 
@@ -209,11 +207,11 @@ r.*,
   EXISTS (
     SELECT 1
     FROM likes l
-    WHERE l.review_id = r.id AND l.user_id = "pe20SeMxcLOhfE5XSR0Gv6OU18u2"
+    WHERE l.review_id = r.id AND l.user_id = ?
   ) AS isLike
 FROM review r
 LEFT JOIN likes rl ON r.id = rl.review_id
-where r.user_id = "pe20SeMxcLOhfE5XSR0Gv6OU18u2"
+where r.user_id = ?
 GROUP BY 
   r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
 ORDER BY r.created_at DESC ;`;

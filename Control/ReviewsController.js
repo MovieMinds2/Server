@@ -44,7 +44,7 @@ const insertReview = async (req, res) => {
     } else {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Duplication_Review" });
+        .json({ message: "Review_Duplication" });
     }
   } catch (error) {
     jwtError(error, res);

@@ -36,19 +36,14 @@ const queryInsertReview = async (reviewInfo) => {
 const queryGetReview = async (reviewInfo) => {
   const { movieId, userId } = reviewInfo;
 
-  console.log(userId, reviewInfo);
+  console.log(movieId, userId);
 
   let reviewResult = {};
-  let values = [movieId];
 
-  let sql = `select round(AVG(rank_score),2) as "averRank" from review where movie_id =? group by movie_id`;
+  // 먼저 리뷰 조회
+  let values = [userId, movieId];
 
-  const averRank = await executeSql(sql, values);
-  reviewResult.averRank = averRank[0].averRank;
-
-  values = [userId, movieId];
-
-  sql = `
+  let sql = `
     SELECT 
   r.id,
   r.user_id,
@@ -69,7 +64,18 @@ GROUP BY
   r.id, r.user_id, r.nickname, r.content, r.rank_score, r.created_at
 ORDER BY r.created_at DESC;
   `;
-  reviewResult.reviews = await executeSql(sql, values);
+  const result = await executeSql(sql, values);
+
+  if (result.length === 0) return;
+
+  reviewResult.reviews = result;
+
+  // 리뷰가 있으면 평점 조회
+  sql = `select round(AVG(rank_score),2) as "averRank" from review where movie_id =? group by movie_id`;
+  values = [movieId];
+
+  const averRank = await executeSql(sql, values);
+  reviewResult.averRank = averRank[0].averRank;
 
   console.log(reviewResult);
   return reviewResult;
